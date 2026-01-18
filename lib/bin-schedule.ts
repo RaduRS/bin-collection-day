@@ -44,6 +44,7 @@ export function getBinSchedule(today: Date = new Date()): BinDay[] {
 
   const pastBinDate = previousMonday(nextBinDate);
   const nextNextBinDate = addWeeks(nextBinDate, 1);
+  const nextNextNextBinDate = addWeeks(nextBinDate, 2);
 
   return [
     {
@@ -60,6 +61,11 @@ export function getBinSchedule(today: Date = new Date()): BinDay[] {
       date: nextNextBinDate,
       color: getBinColor(nextNextBinDate),
       label: "Following Collection",
+    },
+    {
+      date: nextNextNextBinDate,
+      color: getBinColor(nextNextNextBinDate),
+      label: "Later Collection",
     },
   ];
 }

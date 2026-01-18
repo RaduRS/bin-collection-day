@@ -16,9 +16,6 @@ export default function Home() {
           <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
             Bin Collection
           </h1>
-          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-            Check your upcoming collection days
-          </p>
         </header>
 
         {/* 
