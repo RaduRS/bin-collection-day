@@ -5,7 +5,6 @@ import {
   nextMonday,
   previousMonday,
   startOfDay,
-  isSameDay,
 } from "date-fns";
 
 export type BinColor = "Green" | "Black";
