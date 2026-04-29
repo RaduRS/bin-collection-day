@@ -1,24 +1,133 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-display: var(--font-display);
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Paper / ink palette — warm off-white with deep ink */
+  --paper: #f4f1ea;
+  --paper-soft: #ebe6db;
+  --ink: #0c0c0a;
+  --ink-soft: #2a2924;
+  --rule: #1a1a17;
+
+  /* Bin accents */
+  --green: #2e6f3f;
+  --green-deep: #1c4a29;
+  --green-tint: #d8e3d4;
+  --black: #0c0c0a;
+  --black-tint: #d2cfc6;
+
+  /* Active accent — swapped at the page level */
+  --accent: var(--green);
+  --accent-deep: var(--green-deep);
+  --tint: var(--green-tint);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  background: var(--paper);
+  color: var(--ink);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Page-level theme switches based on which bin is next */
+[data-bin="Green"] {
+  --accent: var(--green);
+  --accent-deep: var(--green-deep);
+  --tint: var(--green-tint);
+}
+
+[data-bin="Black"] {
+  --accent: var(--black);
+  --accent-deep: var(--black);
+  --tint: var(--black-tint);
+}
+
+/* Subtle paper grain — applied to the page atmosphere layer */
+.grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.06 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+.tint-wash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 60% at 50% 0%, var(--tint) 0%, transparent 60%),
+    radial-gradient(80% 40% at 100% 100%, var(--tint) 0%, transparent 70%);
+  opacity: 0.9;
+  transition: background 600ms ease;
+}
+
+/* Display utilities */
+.font-display {
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 30, "WONK" 0, "opsz" 144;
+}
+
+.font-display-italic {
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+  font-style: italic;
+  font-variation-settings: "SOFT" 80, "WONK" 1, "opsz" 144;
+}
+
+/* Hairline rules in the editorial style */
+.rule {
+  border-color: color-mix(in oklab, var(--ink) 18%, transparent);
+}
+
+/* Entrance animation — staggered editorial reveal */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes drift {
+  from {
+    opacity: 0;
+    letter-spacing: 0.02em;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    letter-spacing: -0.04em;
+    transform: translateY(0);
+  }
+}
+
+.rise {
+  animation: rise 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.drift {
+  animation: drift 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .drift {
+    animation: none;
+  }
 }

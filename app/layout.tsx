@@ -1,30 +1,44 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Fraunces } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
+  variable: "--font-sans",
   subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+  variable: "--font-mono",
   subsets: ["latin"],
 });
 
+const fraunces = Fraunces({
+  variable: "--font-display",
+  subsets: ["latin"],
+  axes: ["SOFT", "WONK", "opsz"],
+});
+
 export const metadata: Metadata = {
-  title: "Bin Collection Day",
-  description: "Track your bin collection schedule",
+  title: "Bin Day",
+  description: "A quiet, beautiful reminder of when the bins go out.",
   manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
+    shortcut: ["/favicon.ico"],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "BinDay",
+    title: "Bin Day",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#18181b",
+  themeColor: "#f4f1ea",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -39,7 +53,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} antialiased`}
       >
         {children}
       </body>

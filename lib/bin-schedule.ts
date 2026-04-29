@@ -1,29 +1,36 @@
 import {
   addWeeks,
+  differenceInCalendarDays,
   differenceInCalendarWeeks,
-  isMonday,
-  nextMonday,
-  previousMonday,
+  isWednesday,
+  nextWednesday,
+  previousWednesday,
   startOfDay,
 } from "date-fns";
 
 export type BinColor = "Green" | "Black";
 
-interface BinDay {
+export interface BinDay {
   date: Date;
   color: BinColor;
-  label: string; // 'Past', 'Next', 'Next Next', etc.
+  label: BinLabel;
+  daysUntil: number;
 }
 
-// Reference: Monday, Jan 19, 2026 is Green Lid
-const REFERENCE_DATE = new Date(2026, 0, 19); // Month is 0-indexed
+export type BinLabel =
+  | "Past Collection"
+  | "Next Collection"
+  | "Following Collection"
+  | "Later Collection";
+
+// Reference: Wednesday, Jan 21, 2026 is Green Lid
+const REFERENCE_DATE = new Date(2026, 0, 21);
 const REFERENCE_COLOR: BinColor = "Green";
 
 export function getBinColor(date: Date): BinColor {
   const weeksDiff = differenceInCalendarWeeks(date, REFERENCE_DATE, {
-    weekStartsOn: 1,
+    weekStartsOn: 3,
   });
-  // If weeks diff is even, same color. If odd, different color.
   return weeksDiff % 2 === 0
     ? REFERENCE_COLOR
     : REFERENCE_COLOR === "Green"
@@ -34,38 +41,22 @@ export function getBinColor(date: Date): BinColor {
 export function getBinSchedule(today: Date = new Date()): BinDay[] {
   const current = startOfDay(today);
 
-  let nextBinDate: Date;
+  const nextBinDate = isWednesday(current) ? current : nextWednesday(current);
+  const pastBinDate = previousWednesday(nextBinDate);
+  const followingBinDate = addWeeks(nextBinDate, 1);
+  const laterBinDate = addWeeks(nextBinDate, 2);
 
-  if (isMonday(current)) {
-    nextBinDate = current;
-  } else {
-    nextBinDate = nextMonday(current);
-  }
-
-  const pastBinDate = previousMonday(nextBinDate);
-  const nextNextBinDate = addWeeks(nextBinDate, 1);
-  const nextNextNextBinDate = addWeeks(nextBinDate, 2);
+  const build = (date: Date, label: BinLabel): BinDay => ({
+    date,
+    color: getBinColor(date),
+    label,
+    daysUntil: differenceInCalendarDays(date, current),
+  });
 
   return [
-    {
-      date: pastBinDate,
-      color: getBinColor(pastBinDate),
-      label: "Past Collection",
-    },
-    {
-      date: nextBinDate,
-      color: getBinColor(nextBinDate),
-      label: "Next Collection",
-    },
-    {
-      date: nextNextBinDate,
-      color: getBinColor(nextNextBinDate),
-      label: "Following Collection",
-    },
-    {
-      date: nextNextNextBinDate,
-      color: getBinColor(nextNextNextBinDate),
-      label: "Later Collection",
-    },
+    build(pastBinDate, "Past Collection"),
+    build(nextBinDate, "Next Collection"),
+    build(followingBinDate, "Following Collection"),
+    build(laterBinDate, "Later Collection"),
   ];
 }
